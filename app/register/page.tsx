@@ -5,10 +5,10 @@ export default function RegisterPage() {
   interface User {
     id: number
     email: string
-    name?: string
     password:string
     createdAt:Date
     updatedAt?:Date
+    name?: string
   }
 
   const [name, setName] = useState<string>("");
@@ -29,7 +29,7 @@ export default function RegisterPage() {
   }
 
   function click() {
-    const createID:number = Math.floor(Math.random() * (1 - 10000)) + 1;
+    const createID:number = Math.floor(Math.random() * (10000 - 1)) + 1;
     const newUser = createUser(createID, email,password, createdAt, name);
     setUser(newUser);
     console.log(newUser)
@@ -53,6 +53,7 @@ export default function RegisterPage() {
       />
       <button onClick={click} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"> Create User </button>
 
+      {user && <pre>{JSON.stringify(user)}</pre>}
       {user && <p>Created user: {user.name} (id: {user.id}) (Email: {user.email})</p>}
     </div>
   );
