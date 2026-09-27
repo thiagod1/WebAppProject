@@ -1,15 +1,8 @@
 "use client";
 import { useState } from "react";
-export default function RegisterPage() {
+import { User } from "@/types"
 
-  interface User {
-    id: number
-    email: string
-    password:string
-    createdAt:Date
-    updatedAt?:Date
-    name?: string
-  }
+export default function RegisterPage() {
 
   const [name, setName] = useState<string>("");
   const [user, setUser] = useState<User | null>(null); 
@@ -17,6 +10,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState<string>("");
   const [createdAt, setCreatedAt] = useState<Date>(new Date())
   const [updatedAt, setUpdatedAt] = useState<Date>(new Date())
+  const [userStorage, setUserStorage] = useState<User[]>([])
 
   function createUser(createdID: number, email: string, password: string, createdAt: Date, name?: string): User {
     return {
@@ -32,7 +26,10 @@ export default function RegisterPage() {
     const createID:number = Math.floor(Math.random() * (10000 - 1)) + 1;
     const newUser = createUser(createID, email,password, createdAt, name);
     setUser(newUser);
+    const arr: User[] = [newUser]
+    setUserStorage(arr)
     console.log(newUser)
+    console.log(arr)
   }
 
   return (
@@ -50,6 +47,12 @@ export default function RegisterPage() {
         placeholder="Enter your email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Enter your password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
       />
       <button onClick={click} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"> Create User </button>
 
