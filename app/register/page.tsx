@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { User } from "@/types"
 
+
 export default function RegisterPage() {
 
   const [name, setName] = useState<string>("");
@@ -12,6 +13,26 @@ export default function RegisterPage() {
   const [updatedAt, setUpdatedAt] = useState<Date>(new Date())
   const [userStorage, setUserStorage] = useState<User[]>([])
 
+
+  function validatePassword(password:string):boolean{
+    //One lowercase
+    //One uppercase
+    //One Digit
+    //One special character
+    //At least 8 char long
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/;
+    if(password.match(regex)){
+      return true
+    }
+    return false;
+  }
+  function validateEmail(email:string):boolean {
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if(email.match(regex)){
+      return true;
+    }
+    return false;
+  }
   function createUser(createdID: number, email: string, password: string, createdAt: Date, name?: string): User {
     return {
       id: createdID,
@@ -24,12 +45,19 @@ export default function RegisterPage() {
 
   function click() {
     const createID:number = Math.floor(Math.random() * (10000 - 1)) + 1;
-    const newUser = createUser(createID, email,password, createdAt, name);
-    setUser(newUser);
-    const arr: User[] = [newUser]
-    setUserStorage(arr)
-    console.log(newUser)
-    console.log(arr)
+    if (!validateEmail(email)){
+      console.log("Enter a valid email")
+    }
+    if(!validatePassword(password)){
+      console.log("Enter a valid password")
+    }
+    if (validateEmail(email) && validatePassword(password)){
+      const newUser = createUser(createID, email,password, createdAt, name);
+      setUser(newUser);
+      console.log(newUser)
+      setUserStorage(prev=> [...prev, newUser])
+      localStorage.setItem("users", JSON.stringify(userStorage))
+    }
   }
 
   return (
@@ -38,7 +66,7 @@ export default function RegisterPage() {
     <p>For the newsletter app</p>
       <input
         type="text"
-        placeholder="Enter your name"
+        placeholder="Enter your name (Optional)"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
