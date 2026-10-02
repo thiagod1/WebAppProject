@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+
   return (
     <html
       lang="en"
@@ -27,10 +28,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <body className="min-h-full flex flex-col">      
     <nav className="flex items-center justify-between p-4 border-b"> 
         <h1> 
-          <Link href="/">home</Link>
-          <Link href="/register">Register</Link>
-          <Link href="/login">Login</Link>
-          <Link href="/newsletter">Newsletter</Link>
+          <Link className=" btn btn-soft btn-primary" href="/">Home</Link>
+          <Link className=" btn btn-soft btn-primary" href="/register">Register</Link>
+          <Link className=" btn btn-soft btn-primary" href="/newsletters">Newsletter</Link>
+          <Link className=" btn btn-soft btn-primary" href="/login">Login</Link>
+          <button className="absolute top-0 right-0 size-16">Logout</button>
         </h1>
       </nav>
       {children}

@@ -3,13 +3,22 @@
 
   export const userDatabase:User[]= []
 
-  const isAuthenticated:boolean;
-
+  export interface Newsletter {
+    id:number
+    title:string
+    content:string
+    image:string
+    status:newsletterStatus
+    authorId:number
+    createdAt:Date
+    updatedAt?:Date
+  }
   export interface User {
     id: number
     email: string
     password:string
     createdAt:Date
     updatedAt?:Date
-    name?: string
+    name?:string
+    isLoggedIn?:boolean
   }

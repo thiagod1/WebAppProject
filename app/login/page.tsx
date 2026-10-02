@@ -2,14 +2,12 @@
 
 import { useState } from "react"
 import { User } from "@/types" 
-import { userStorage } from "@/register"
 
 export default function LoginPage() {
 
   const [loginInfo, setLoginInfo] = useState<string>("")
   const [password, setPassword] = useState<string>("")
-  
-
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
 
   const usersLocalStorage = localStorage.getItem("users")
   const users: User[] = usersLocalStorage ? JSON.parse(usersLocalStorage) : []
@@ -17,32 +15,37 @@ export default function LoginPage() {
   const findUser = users.find(u=> u.email === loginInfo)
 
 
-
-
   function click() {
     if (findUser  && findUser.password === password){
-      console.log("YOure logged in")
+      console.log("You're logged in")
+      findUser.isLoggedIn = true;
+      setIsLoggedIn(true)
     }else{
-      console.log("Wrong Deetails")
+      console.log("Wrong Details")
     }
   }
 
   return(
     <div>
       <h1>This is the login page</h1>
-      <input
-        type="text"
-        placeholder="Enter your email"
-        value={loginInfo}
-        onChange={(e) => setLoginInfo(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Enter your password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={click}>Button</button>
+      <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+        <legend className="fieldset-legend">Login</legend>
+          <label className="label">Email</label>
+          <input
+          className="input"
+          type="text"
+          value={loginInfo}
+          onChange={(e) => setLoginInfo(e.target.value)}
+          />
+          <label className="label">Password</label>
+          <input
+          className="input"
+          type="text"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          />
+          <button className="btn btn-primary" onClick={click}>Button</button>
+      </fieldset>
     </div>
 
   );

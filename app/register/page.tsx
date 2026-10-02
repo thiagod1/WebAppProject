@@ -11,6 +11,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState<string>("");
   const [createdAt, setCreatedAt] = useState<Date>(new Date())
   const [updatedAt, setUpdatedAt] = useState<Date>(new Date())
+  const [isAuthenticated, setIsAuthenticated ] = useState<boolean>(false)
   const [userStorage, setUserStorage] = useState<User[]>([])
 
 
@@ -33,13 +34,14 @@ export default function RegisterPage() {
     }
     return false;
   }
-  function createUser(createdID: number, email: string, password: string, createdAt: Date, name?: string): User {
+  function createUser(createdID: number, email: string, password: string, createdAt: Date, name?: string, isLoggedIn?:boolean): User {
     return {
       id: createdID,
       email:email,
       password:password,
       createdAt:createdAt,
       name: name === "" ? undefined : name,
+      isLoggedIn:isLoggedIn,
     }
   }
 
@@ -64,26 +66,33 @@ export default function RegisterPage() {
     <div className="flex flex-col gap-3 max-w-sm">
     <h1>This is the register page</h1>
     <p>For the newsletter app</p>
-      <input
-        type="text"
-        placeholder="Enter your name (Optional)"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Enter your email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Enter your password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={click} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"> Create User </button>
-
+      <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+        <label className="label">Enter your Name (Optional)</label>
+        <input
+          className="input"
+          placeholder="Name(Optional)"
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <label className="label">Enter your Email</label>
+        <input
+          className="input"
+          placeholder="Email"
+          type="text"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <label className="label">Enter your password</label>
+        <input
+          className="input"
+          placeholder="Password"
+          type="text"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button onClick={click} className="btn btn-primary"> Create User </button>
+      </fieldset>
       {user && <pre>{JSON.stringify(user)}</pre>}
       {user && <p>Created user: {user.name} (id: {user.id}) (Email: {user.email})</p>}
     </div>
