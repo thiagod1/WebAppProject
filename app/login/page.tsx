@@ -18,7 +18,6 @@ export default function LoginPage() {
   function click() {
     if (findUser  && findUser.password === password){
       console.log("You're logged in")
-      findUser.isLoggedIn = true;
       setIsLoggedIn(true)
     }else{
       console.log("Wrong Details")

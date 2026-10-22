@@ -21,15 +21,15 @@ export default function RegisterPage() {
     //One Digit
     //One special character
     //At least 8 char long
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/;
-    if(password.match(regex)){
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/;
+    if(password.match(passwordRegex)){
       return true
     }
     return false;
   }
   function validateEmail(email:string):boolean {
-    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if(email.match(regex)){
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if(email.match(emailRegex)){
       return true;
     }
     return false;
