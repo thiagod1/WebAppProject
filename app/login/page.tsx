@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { User } from "@/types" 
 
 export default function LoginPage() {
 
@@ -9,19 +8,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState<string>("")
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
 
-  const usersLocalStorage = localStorage.getItem("users")
-  const users: User[] = usersLocalStorage ? JSON.parse(usersLocalStorage) : []
-
-  const findUser = users.find(u=> u.email === loginInfo)
-
 
   function click() {
-    if (findUser  && findUser.password === password){
-      console.log("You're logged in")
-      setIsLoggedIn(true)
-    }else{
-      console.log("Wrong Details")
-    }
   }
 
   return(

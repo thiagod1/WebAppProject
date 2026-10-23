@@ -1,100 +1,127 @@
 "use client";
+
 import { useState } from "react";
-import { User } from "@/types"
+import { useRouter } from "next/navigation"
+
 
 
 export default function RegisterPage() {
 
-  const [name, setName] = useState<string>("");
-  const [user, setUser] = useState<User | null>(null); 
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [createdAt, setCreatedAt] = useState<Date>(new Date())
-  const [updatedAt, setUpdatedAt] = useState<Date>(new Date())
-  const [isAuthenticated, setIsAuthenticated ] = useState<boolean>(false)
-  const [userStorage, setUserStorage] = useState<User[]>([])
-
-
-  function validatePassword(password:string):boolean{
-    //One lowercase
-    //One uppercase
-    //One Digit
-    //One special character
-    //At least 8 char long
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/;
-    if(password.match(passwordRegex)){
-      return true
-    }
-    return false;
-  }
-  function validateEmail(email:string):boolean {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if(email.match(emailRegex)){
-      return true;
-    }
-    return false;
-  }
-  function createUser(createdID: number, email: string, password: string, createdAt: Date, name?: string, isLoggedIn?:boolean): User {
-    return {
-      id: createdID,
-      email:email,
-      password:password,
-      createdAt:createdAt,
-      name: name === "" ? undefined : name,
-      isLoggedIn:isLoggedIn,
-    }
+  type FieldErrors = {
+    email?: string[]
+    password?: string[]
+    name?: string[]
   }
 
-  function click() {
-    const createID:number = Math.floor(Math.random() * (10000 - 1)) + 1;
-    if (!validateEmail(email)){
-      console.log("Enter a valid email")
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [differentPassword, setDifferentPassword] =  useState("")
+  const [error, setError] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [successMessage, setSuccessMessage] = useState("")
+
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
+  const router = useRouter()
+
+
+  const registerSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setSuccessMessage("")
+    setError("")
+    setFieldErrors({})
+    setDifferentPassword("")
+
+    if (password !== confirmPassword) {
+      setDifferentPassword("Password must match")
+      return
     }
-    if(!validatePassword(password)){
-      console.log("Enter a valid password")
-    }
-    if (validateEmail(email) && validatePassword(password)){
-      const newUser = createUser(createID, email,password, createdAt, name);
-      setUser(newUser);
-      console.log(newUser)
-      setUserStorage(prev=> [...prev, newUser])
-      localStorage.setItem("users", JSON.stringify(userStorage))
+
+    setIsSubmitting(true)
+
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, name })
+      })
+      const data = await response.json()
+      if (!response.ok) {
+        setFieldErrors(data.fieldErrors || {})
+        setError(data.error || "Registration Failed")
+      }
+      if (response.ok) {
+        setSuccessMessage("Account Created")
+        router.push("/login")
+      }
+    } catch {
+      setError("Could not reach server")
+    } finally {
+      setIsSubmitting(false)
     }
   }
+
+
 
   return (
     <div className="flex flex-col gap-3 max-w-sm">
-    <h1>This is the register page</h1>
-    <p>For the newsletter app</p>
-      <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-        <label className="label">Enter your Name (Optional)</label>
-        <input
-          className="input"
-          placeholder="Name(Optional)"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <label className="label">Enter your Email</label>
-        <input
-          className="input"
-          placeholder="Email"
-          type="text"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <label className="label">Enter your password</label>
-        <input
-          className="input"
-          placeholder="Password"
-          type="text"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button onClick={click} className="btn btn-primary"> Create User </button>
-      </fieldset>
-      {user && <pre>{JSON.stringify(user)}</pre>}
-      {user && <p>Created user: {user.name} (id: {user.id}) (Email: {user.email})</p>}
+      <h1>Register</h1>
+      <form onSubmit={registerSubmit} noValidate>
+        {error && (<div className="alert alert-error mb-4">
+          <span>{error}</span>
+        </div>)}
+        <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+          <label className="label">Enter your Name (Optional)</label>
+          <input
+            className="input"
+            placeholder="Name(Optional)"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          {fieldErrors.name && (<p className="text-error text-sm">{fieldErrors.name[0]}</p>)}
+          <label className="label">Enter your Email</label>
+          <input
+            className="input"
+            placeholder="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          {fieldErrors.email && (<p className="text-error text-sm">{fieldErrors.email[0]}</p>)}
+          <label className="label">Enter your password</label>
+          <input
+            className="input"
+            placeholder="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {fieldErrors.password && (
+            <p className="text-error text-sm">{fieldErrors.password[0]}</p>
+          )}
+          <input
+            className="input"
+            placeholder="Confirm Password"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          { differentPassword && (<span className="text-error text-sm">{differentPassword}</span>)}
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (<span className="loading loading-spinner loading-sm"></span>
+            ) : (
+              "Create an Account"
+            )}
+          </button>
+          {successMessage && (<p className="">{successMessage}</p>)}
+        </fieldset>
+      </form>
     </div>
   );
 }
