@@ -12,7 +12,6 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d
 export const registrationSchema = z.object({
   email: z.string()
     .trim()
-    .toLowerCase()
     .email("Please enter a valid email"),
 
   password: z.
@@ -26,5 +25,12 @@ export const registrationSchema = z.object({
     .max(20, "Name must be max 20 characters")
     .optional()
 });
-
+ 
+export const signInSchema = z.object({
+  email:z.string()
+  .min(1, "Email is required")
+  .email("Invalid email"),
+  password:z.string()
+   .min(1, "Password is required")
+})
 
