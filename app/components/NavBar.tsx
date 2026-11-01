@@ -2,8 +2,22 @@
 
 import Link from 'next/link'
 import { SignOut } from './signout-button'
+import { useSession } from "next-auth/react" 
+
 
 export const NavBar = () => {
+
+  const { data: session } = useSession()
+  const links = [
+    { href: "/newsletters", label: "Newsletters", show: true },
+    { href: "/dashboard",   label: "Dashboard",   show: !!session?.user },
+    { href: "/login",       label: "Login",       show: !session?.user },
+    { href: "/register",    label: "Register",    show: !session?.user },
+  ].filter((l) => l.show)
+
+
+
+
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="navbar-start">
@@ -14,30 +28,53 @@ export const NavBar = () => {
           <ul
             tabIndex={-1}
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-            <li><a>Item 1</a></li>
-            <li>
-              <a>Parent</a>
-              <ul className="p-2">
-                <li><a>Submenu 1</a></li>
-                <li><a>Submenu 2</a></li>
-              </ul>
+          {links.map((link) => (
+            <li key={link.href}>
+              <Link href={link.href}>{link.label}</Link>
             </li>
-            <li><a>Item 3</a></li>
+          ))}
           </ul>
         </div>
         <a className="btn btn-ghost text-xl">Newsletter</a>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
-          <li><Link className="btn btn-soft btn-primary" href="/login">Login</Link></li>
-          <li><Link className="btn btn-soft btn-primary" href="/register">Register</Link></li>
-          <li><Link className="btn btn-soft btn-primary" href="/newsletters">Newsletter</Link></li>
-          <li><Link className="btn btn-soft btn-primary" href="/dashboard">Dashboard</Link></li>
+        {links.map((link) => (
+          <li  key={link.href}>
+            <Link className="btn btn-soft btn-primary" href={link.href}>{link.label}</Link>
+          </li>
+        ))}
         </ul>
       </div>
-      <div className="navbar-end">
-        <SignOut />
-      </div>
+      {session?.user ? (
+        <div className="dropdown dropdown-end navbar-end">
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn btn-ghost btn-circle avatar placeholder"
+          >
+            <div className="bg-primary text-primary-content w-10 rounded-full flex items-center justify-center">
+              <span className="text-lg">
+                {session?.user?.name?.charAt(0).toUpperCase() || session?.user?.email?.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          </div>
+          <ul className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow" tabIndex={-1}>
+            <li>
+              <span>
+                {session.user.name || session.user.email}
+              </span>
+            </li>
+            <li>
+              <SignOut />
+            </li>
+          </ul>
+        </div>
+      ) : (
+        <div className="navbar-end">
+        </div>
+      )}
+
     </div>
   )
 }

@@ -52,3 +52,5 @@ dist/
 /app/generated/prisma
 
 /app/generated/prisma
+
+!.env.example

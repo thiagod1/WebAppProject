@@ -36,28 +36,18 @@ const providers: Provider[] = [
       if (!isValid) return null;
       return { id: user.id.toString(), email: user.email, name: user.name }
     }
-  })
+  }),
 ]
 
-export const providerMap = providers
-  .map((provider) => {
-    if (typeof provider === "function") {
-      const providerData = provider()
-      return { id: providerData.id, name: providerData.name }
-    } else {
-      return { id: provider.id, name: provider.name }
-    }
-  })
-  .filter((provider) => provider.id !== "credentials")
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers,
   session: { strategy: "jwt" },
   callbacks: {
-    authorized: async ({ auth, request }) => {
-      if (request.nextUrl.pathname.startsWith("/")) return !!auth
-      return true
-    }
+    async session({session, token}){
+      if (token.sub) session.user.id = token.sub
+        return session
+    },
   },
   pages: {
     signIn: "/login",
