@@ -1,7 +1,11 @@
-const EditPage = () => {
+import { editNewsletter } from "../../../actions/NewsletterAction"
+
+export default function EditPage () {
+
   return (
-    <div></div>
+    <>
+
+    </>
   )
 }
 
-export default EditPage 
