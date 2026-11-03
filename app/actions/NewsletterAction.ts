@@ -5,6 +5,8 @@ import { revalidatePath } from "next/cache"
 import { auth } from "../../auth"
 import { redirect } from "next/navigation"
 import { newsletterStatus } from "../generated/prisma/client"
+import { newsletterSchema } from "../lib/validation"
+import * as z from "zod"
 
 
 
@@ -20,13 +22,19 @@ export async function addNewsletter(data: {
     const session = await auth()
     if (!session?.user?.id) return { success: false, error: "User not logged in" }
 
+    // Zod check
+    const parsed = newsletterSchema.safeParse(data)
+    if (!parsed.success) {
+      return { success: false, error: "Validation failed", fieldErrors: z.flattenError(parsed.error).fieldErrors }
+    }
+
     const newNewsletter = await prisma.newsletter.create({
       data: {
-        title: data.title,
-        content: data.content,
-        image: data.image,
-        authorId: Number(session?.user?.id),
-        status: data.status
+        title: parsed.data.title,
+        content: parsed.data.content,
+        image: parsed.data.image,
+        authorId: Number(session.user.id),
+        status: parsed.data.status
       }
     })
 
@@ -73,6 +81,11 @@ export async function editNewsletter(
 
   const session = await auth()
   if (!session?.user?.id) return { success: false, error: "User not logged in" }
+  // Zod check
+  const parsed = newsletterSchema.safeParse(data)
+  if (!parsed.success) {
+    return { success: false, error: "Validation failed", fieldErrors: z.flattenError(parsed.error).fieldErrors }
+  }
 
   try {
 
@@ -82,13 +95,12 @@ export async function editNewsletter(
     const editedNewsletter = await prisma.newsletter.update({
       where: { id, authorId: Number(session.user.id) },
       data: {
-        title: data.title,
-        content: data.content,
-        image: data.image,
-        status: data.status
+        title: parsed.data.title,
+        content: parsed.data.content,
+        image: parsed.data.image,
+        status: parsed.data.status
       }
     })
-
     revalidatePath("/dashboard")
     revalidatePath("/newsletters")
     return { success: true, editedNewsletter }

@@ -30,7 +30,14 @@ export const signInSchema = z.object({
   email:z.string()
   .min(1, "Email is required")
   .email("Invalid email"),
+
   password:z.string()
    .min(1, "Password is required")
 })
 
+export const newsletterSchema = z.object({
+  title:   z.string().trim().min(1, "Title is required"),
+  content: z.string().trim().min(1, "Content is required"),
+  image:   z.url("Must be a valid url"),
+  status:  z.enum(["DRAFT", "SCHEDULE", "SENT"])
+})
