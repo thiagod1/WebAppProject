@@ -1,5 +1,6 @@
 import { getAllNewsletter } from "../actions/NewsletterAction";
 import Image from "next/image"
+import Link from "next/link"
 
 export default async function NewsletterPage() {
 
@@ -31,6 +32,9 @@ export default async function NewsletterPage() {
               </h2>
               <div className="text-xs uppercase font-semibold opacity-60">By {n.author.name || "Anonymous"} | {n.updatedAt.toLocaleDateString()}</div>
               <p className="line-clamp-4">{n.content}</p>
+              <div className="card-actions justify-end">
+                <Link className="btn btn-primary btn-sm" href={`/newsletters/${n.id}`}>Read More</Link>
+              </div>
             </div>
           </div>
         ))}
@@ -38,3 +42,4 @@ export default async function NewsletterPage() {
     </div>
   );
 };
+

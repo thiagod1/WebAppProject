@@ -129,3 +129,11 @@ export async function getMyNewsletterById(id: number) {
   })
 }
 
+// no auth because it is for public page
+export async function getSentNewsletterById(id:number) {
+  return await prisma.newsletter.findFirst({
+    where: { id, status:"SENT" },
+    include: { author: { select:  {name: true }}}
+  })
+}
+
