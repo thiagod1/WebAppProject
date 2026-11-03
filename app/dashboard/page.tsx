@@ -7,7 +7,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="w-full space-y-4">
-    {/* Header section */}
+      {/* Header section */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">My Newsletters</h1>
         <Link href="/dashboard/create" className="btn btn-primary btn-sm">
@@ -68,6 +68,7 @@ export default async function DashboardPage() {
                 {/* Actions Column */}
                 <td className="text-right">
                   <div className="flex justify-end gap-2">
+                    <Link href={`/dashboard/view/${newsletter.id}`} className="btn btn-ghost btn-xs">View</Link>
                     <Link href={`/dashboard/edit/${newsletter.id}`} className="btn btn-ghost btn-xs">Edit</Link>
                     <form
                       action={async () => {

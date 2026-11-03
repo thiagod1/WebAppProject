@@ -112,7 +112,8 @@ export async function getMyNewsletterById(id: number) {
   const session = await auth()
   if (!session?.user?.id) return redirect("/login")
   return await prisma.newsletter.findFirst({
-    where: { id, authorId: Number(session.user.id) }
+    where: { id, authorId: Number(session.user.id) },
+    include: { author: { select: { name: true } } }
   })
 }
 
