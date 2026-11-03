@@ -1,5 +1,6 @@
 import { deleteNewsletter, getMyNewsletter } from "../actions/NewsletterAction"
 import Link from 'next/link'
+import Image from "next/image"
 
 
 export default async function DashboardPage() {
@@ -42,7 +43,13 @@ export default async function DashboardPage() {
                     {newsletter.image && (
                       <div className="avatar">
                         <div className="mask mask-squircle h-12 w-12">
-                          <img src={newsletter.image} alt={newsletter.title} />
+                          <Image
+                            src={newsletter.image}
+                            alt={newsletter.title}
+                            width={48}
+                            height={48}
+                            className="w-full h-auto rounded-box"
+                          />
                         </div>
                       </div>
                     )}

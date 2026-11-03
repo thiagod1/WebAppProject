@@ -30,7 +30,7 @@ export function NewsletterForm({ id, newsletter }: Props) {
 
     const parsed = newsletterSchema.safeParse({ title, content, image, status })
     if (!parsed.success) {
-      setFieldErrors(z.flattenError(parsed.error).fieldErrors)   // instant, no server trip
+      setFieldErrors(z.flattenError(parsed.error).fieldErrors)   
       return
     }
 
@@ -79,7 +79,7 @@ export function NewsletterForm({ id, newsletter }: Props) {
           value={image}
           onChange={(e) => setImage(e.target.value)}
           name="image"
-          placeholder="https://example.com"
+          placeholder="https://images.unsplash.com/photo-..."
           className="input input-bordered w-full" />
         {fieldErrors.image && <p className="text-error text-sm">{fieldErrors.image[0]}</p>}
       </fieldset>

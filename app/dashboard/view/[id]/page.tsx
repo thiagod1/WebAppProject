@@ -1,6 +1,7 @@
 import { getMyNewsletterById } from "../../../actions/NewsletterAction"
 import { notFound } from "next/navigation"
 import Link from 'next/link'
+import Image from "next/image"
 
 export default async function ViewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -22,9 +23,13 @@ export default async function ViewPage({ params }: { params: Promise<{ id: strin
         <div className="card-body">
         {newsletterById.image && (
           <figure>
-            <img 
+            <Image
               src={newsletterById.image} 
-              alt={newsletterById.title}/>
+              alt={newsletterById.title}
+              width={768}
+              height={432}
+              className="w-full h-auto rounded-box"
+            />
           </figure>
         )}
           <h2 className="card-title">
