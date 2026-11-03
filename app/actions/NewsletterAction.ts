@@ -62,6 +62,7 @@ export async function getAllNewsletter() {
   return await prisma.newsletter.findMany({
     where: { status: "SENT" },
     orderBy: { id: "desc" },
+    include: { author: { select: { name: true } } }
   })
 }
 
@@ -107,28 +108,11 @@ export async function getMyNewsletter() {
     orderBy: { updatedAt: "desc" }
   })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-//  id        Int @id @default(autoincrement())
-//  title     String
-//  content   String
-//  image     String
-//  authorId  Int
-//  author    User @relation(fields:[authorId],references:[id])
-//  status    newsletterStatus @default(DRAFT)
-//  createdAt  DateTime @default(now()) @map("created_at")
-//  updatedAt  DateTime @updatedAt @map("updated_at")
-//
-//  @@map("newsletter")
+export async function getMyNewsletterById(id: number) {
+  const session = await auth()
+  if (!session?.user?.id) return redirect("/login")
+  return await prisma.newsletter.findFirst({
+    where: { id, authorId: Number(session.user.id) }
+  })
+}
 
