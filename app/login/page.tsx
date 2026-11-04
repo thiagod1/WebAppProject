@@ -6,6 +6,8 @@ import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { signInSchema } from "../lib/validation"
 import * as z from "zod"
+import { handleGoogleLogin } from "../actions/GoogleActions"
+import { handleGithubLogin } from "../actions/GithubActions"
 
 
 type FieldErrors = {
@@ -20,9 +22,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [emailLogin, setEmailLogin] = useState(false)
 
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const router = useRouter()
+
+  const ShowEmailLogin = () => {
+    setEmailLogin(!emailLogin)
+  }
 
   const handleLogin = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -31,21 +38,21 @@ export default function LoginPage() {
     setFieldErrors({})
 
 
-    const result = signInSchema.safeParse({email, password})
-    if(!result.success){
+    const result = signInSchema.safeParse({ email, password })
+    if (!result.success) {
       setFieldErrors(z.flattenError(result.error).fieldErrors)
       setIsSubmitting(false)
       return
     }
 
-    try{
-      const response = await signIn("credentials",{
-        email, 
+    try {
+      const response = await signIn("credentials", {
+        email,
         password,
-        redirect:false,
+        redirect: false,
       })
 
-      if(response?.error){
+      if (response?.error) {
         setError("Invalid credentials")
         return
       }
@@ -53,68 +60,91 @@ export default function LoginPage() {
       router.refresh()
       router.push("/dashboard")
 
-    }catch(err){
-      setError("Something happenedd") 
+    } catch (err) {
+      setError("Something happenedd")
       console.log(err)
-    }finally{
+    } finally {
       setIsSubmitting(false)
     }
   }
-  return(
+  return (
     <>
-      <form onSubmit={handleLogin} className="mt-4" noValidate>
-        {" "}
-        {error && (<div className="alert alert-error mb-4">
-          <span>{error}</span>
-        </div>)}
-        <div className="form-control">
-          <label className= "label">
-            <span className="label-text">Email</span>
-          </label>
-          <input
-            type="email"
-            placeholder="you@example.com"
-            className="input input-bordered w-full"
-            value={email}
-            onChange={(e)=> setEmail(e.target.value)}
-           />
-          {fieldErrors.email && (<p className="text-error text-sm">{fieldErrors.email[0]}</p>)}
-        </div>
-        <div className="form-control">
-          <label className= "label">
-            <span className="label-text">Password</span>
-          </label>
-          <input
-            type="password"
-            placeholder="*********"
-            className="input input-bordered w-full"
-            value={password}
-            onChange={(E)=> setPassword(E.target.value)}
-           />
-          {fieldErrors.password&& (<p className="text-error text-sm">{fieldErrors.password[0]}</p>)}
-        </div>
-        <div className="form-control mt-6">
-          <button 
-            type="submit" 
-            className="btn btn-primary w-full"
-            disabled={isSubmitting}
-            >
-            {isSubmitting ? (<span className="loading loading-spinner loading-sm"></span>
-              ): ( 
-                "Sign In"
-              )}
+      <div className="mx-auto max-w-3xl p-4 space-y-4">
+        <div className="grid gap-4">
+          <h2 className="card-title text-2xl justify-center">Please Sign In</h2>
+
+          <form action={handleGoogleLogin}>
+            <button className="btn btn-primary" type="submit">Sign In with Google</button>
+          </form>
+          <form action={handleGithubLogin}>
+            <button className="btn btn-primary" formAction={handleGithubLogin}>Sign In with GitHub</button>
+          </form>
+          <button
+            className="btn btn-primary"
+            onClick={ShowEmailLogin}
+          >
+            Sign in with Email
           </button>
+          {emailLogin ?
+            <div>
+              <form onSubmit={handleLogin} className="mt-4" noValidate>
+                {" "}
+                {error && (<div className="alert alert-error mb-4">
+                  <span>{error}</span>
+                </div>)}
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Email</span>
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="you@example.com"
+                    className="input input-bordered w-full"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  {fieldErrors.email && (<p className="text-error text-sm">{fieldErrors.email[0]}</p>)}
+                </div>
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Password</span>
+                  </label>
+                  <input
+                    type="password"
+                    placeholder="*********"
+                    className="input input-bordered w-full"
+                    value={password}
+                    onChange={(E) => setPassword(E.target.value)}
+                  />
+                  {fieldErrors.password && (<p className="text-error text-sm">{fieldErrors.password[0]}</p>)}
+                </div>
+                <div className="form-control mt-6">
+                  <button
+                    type="submit"
+                    className="btn btn-primary w-full"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (<span className="loading loading-spinner loading-sm"></span>
+                    ) : (
+                      "Sign In"
+                    )}
+                  </button>
+                </div>
+              </form>
+
+              <div className="divider">OR</div>
+
+              <p className="text-center">
+                Don&apos;t have an account?{" "}
+                <Link href="/register" className="link link-primary">
+                  Sign Up
+                </Link>
+              </p>
+            </div>
+            : " "
+          }
         </div>
-      </form>
-
-      <div className="divider">OR</div>
-
-      <p className="text-center">
-        Don&apos;t have an account?{" "}
-        <Link href="/register" className="link link-primary">
-          Sign Up
-         </Link>
-      </p>
+      </div>
     </>
   );
 };

@@ -48,6 +48,46 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (token.sub) session.user.id = token.sub
         return session
     },
+    async signIn({account, profile}){
+      if(account?.provider === "credentials") return true
+      if(!account || !profile?.email) return false
+      if (account.provider === "google" && !profile.email_verified) return false
+
+      const providerId = account.providerAccountId
+      const existing = account.provider === "github"
+        ? await prisma.user.findUnique({where: { githubId: providerId} })
+        : await prisma.user.findUnique({where: { googleId: providerId }})
+      if(existing) return true 
+
+      const emailTaken = await prisma.user.findUnique({ where: { email: profile.email}})
+
+      if(emailTaken) return "/login?error=EmailInUse"
+
+        await prisma.user.create({
+          data: {
+            email: profile.email,
+            name: profile.name ?? null,
+            ...(account.provider === "github" ? {githubId: providerId } : { googleId: providerId }) 
+          }
+        })
+        return true
+    },
+    async jwt({token, account}){ 
+      if(account && account.provider !== "credentials") {
+        const dbUser = account.provider === "github" 
+          ? await prisma.user.findUnique({
+            where: { githubId: account?.providerAccountId}
+        })
+        :  await prisma.user.findUnique({
+            where: { googleId : account?.providerAccountId}
+        })
+        if(!dbUser) throw new Error("OAuth user not ofund")
+
+        token.sub = dbUser.id.toString()
+      }
+      return token
+    }
+
   },
   pages: {
     signIn: "/login",
