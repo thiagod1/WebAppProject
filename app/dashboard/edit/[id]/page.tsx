@@ -18,7 +18,7 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
         Newsletter Edit Page
       </h2>
       <div className="flex min-h-screen items-center justify-center p-4">
-        <div className="w-full max-w-lg rounded-box bg-base-1s0 p-6 shadow-xl">
+        <div className="w-full max-w-lg rounded-box bg-base-100 p-6 shadow-xl">
           <NewsletterForm id={newsletterById.id} newsletter={newsletterById} />
         </div>
       </div>

@@ -65,13 +65,13 @@ export default function RegisterPage() {
 
 
   return (
-    <div className="flex flex-col gap-3 max-w-sm">
-      <h1>Register</h1>
+    <div className="mx-auto w-full max-w-sm p-4 flex flex-col gap-3">
+      <h1 className="text-2xl font-bold text-center">Register</h1>
       <form onSubmit={registerSubmit} noValidate>
         {error && (<div className="alert alert-error mb-4">
           <span>{error}</span>
         </div>)}
-        <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+        <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
           <label className="label">Enter your Name (Optional)</label>
           <input
             className="input"

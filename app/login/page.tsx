@@ -61,7 +61,7 @@ export default function LoginPage() {
       router.push("/dashboard")
 
     } catch (err) {
-      setError("Something happenedd")
+      setError("Something happened")
       console.log(err)
     } finally {
       setIsSubmitting(false)
