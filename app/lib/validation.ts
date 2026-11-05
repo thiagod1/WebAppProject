@@ -44,3 +44,21 @@ export const newsletterSchema = z.object({
     error: "Use an Unsplash URL (https://images.unsplash.com/...)"}),
   status:  z.enum(["DRAFT", "SCHEDULE", "SENT"])
 })
+
+
+export const devToSchema = z.array(z.object({
+  id: z.number(),
+  title: z.string(),
+  description: z.string(),
+  url: z.url({ protocol: /^https$/ }),
+  cover_image: z.url({ protocol: /^https$/ }).nullable(),
+  published_at: z.string(),
+  user: z.object({ name: z.string() }),
+}))
+
+export const rseSchema = z.array(z.object({
+  title: z.string(),
+  published: z.string(),
+  description: z.string(),
+  url: z.url({ protocol: /^https$/ }),
+}))

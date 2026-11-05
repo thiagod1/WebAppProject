@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache"
 import { auth } from "../../auth"
 import { redirect } from "next/navigation"
 import { newsletterStatus } from "../generated/prisma/client"
-import { newsletterSchema } from "../lib/validation"
+import { newsletterSchema, devToSchema, rseSchema} from "../lib/validation"
 import * as z from "zod"
 
 
@@ -136,4 +136,34 @@ export async function getSentNewsletterById(id:number) {
     include: { author: { select:  {name: true }}}
   })
 }
+
+export async function getDevToArticles() {
+  try {
+    const res = await fetch("https://dev.to/api/articles?per_page=6", { next: { revalidate: 3600 } })
+    if (!res.ok) return []
+
+    const parsed = devToSchema.safeParse(await res.json())
+    if (!parsed.success) return []
+
+    return parsed.data
+  } catch (err) {
+    console.error("Failed to fetch dev.to articles:", err)
+    return []
+  }
+}
+
+export async function getRseNewsletters(){
+  try{
+    const res = await fetch("https://us-rse.org/api/newsletters.json", { next: { revalidate: 3600 } })
+    if(!res.ok) return []
+
+    const parsed =  rseSchema.safeParse( await res.json())
+    if(!parsed.success) return []
+    return parsed.data.slice(0,6)
+  }catch(err){
+    console.log("Failed to fetch US-RSE newsletters",err)
+    return []
+  }
+}
+
 
