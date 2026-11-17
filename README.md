@@ -62,7 +62,7 @@
 - PostgreSQL 15+
 
 
-## Brief Desirables Met
+## Extra Features
 
 - Multi-method auth
 - External Newsletters (US-RSE, devTo)
